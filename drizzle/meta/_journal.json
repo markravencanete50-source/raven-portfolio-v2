@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "mysql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1782449708640,
+      "tag": "0000_perfect_dragon_lord",
+      "breakpoints": true
+    }
+  ]
 }
