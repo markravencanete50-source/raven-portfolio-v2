@@ -52,36 +52,14 @@ const STATS = [
 
 const EXPERIENCE = [
   {
-    period: "Jun 2026 — Present",
-    role: "Business Developer",
+    period: "Mar 2026 — Present",
+    role: "Operations Business Development",
     company: "House of Lettings",
     location: "Remote (UK)",
-    type: "Progression",
+    type: "Current",
     description:
-      "Driving business growth initiatives, identifying new client opportunities, building strategic partnerships, and expanding the company's property management portfolio across the UK market.",
-    tags: ["Business Development", "Client Acquisition", "Strategy", "CRM"],
-    color: "primary",
-  },
-  {
-    period: "Mar 2026 — Jun 2026",
-    role: "Operations Manager",
-    company: "House of Lettings",
-    location: "Remote (UK)",
-    type: "Progression",
-    description:
-      "Led end-to-end operations workflows and administrative systems for a UK property lettings company. Developed TimeCRM — a real-time multi-agent time tracking system synced with Google Sheets via Apps Script.",
-    tags: ["Operations", "Google Apps Script", "TimeCRM", "Remote Ops"],
-    color: "primary",
-  },
-  {
-    period: "Dec 2025 — Mar 2026",
-    role: "Executive Assistant",
-    company: "House of Lettings",
-    location: "Remote (UK)",
-    type: "Progression",
-    description:
-      "Provided executive-level administrative support — calendar management, CRM maintenance, document production, and coordination of property management workflows for UK-based lettings operations.",
-    tags: ["Executive Support", "Calendar Mgmt", "CRM", "Documentation"],
+      "Started as Executive Assistant providing executive-level administrative support — calendar management, CRM maintenance, and document production — before progressing through Operations Manager, where I built TimeCRM (a real-time multi-agent time tracking system synced with Google Sheets via Apps Script), and into my current Operations Business Development role, where I drive growth initiatives, identify new client opportunities, and expand the company's property management portfolio across the UK market.",
+    tags: ["Operations", "Business Development", "TimeCRM", "CRM", "Google Apps Script", "Remote Ops"],
     color: "primary",
   },
   {
