@@ -406,6 +406,14 @@ const SERVICES = [
       "Design and development of professional websites and web applications — from property platforms and business landing pages to full-stack dashboards. Built with modern tech stacks including React, Next.js, TypeScript, and Firebase.",
     tags: ["React", "Next.js", "TypeScript", "Firebase", "Full-Stack"],
   },
+  {
+    number: "05",
+    icon: Zap,
+    title: "Automation (Make.com)",
+    description:
+      "End-to-end automation design and build using Make.com — connecting your CRM, email platform, calendar, forms, and APIs into seamless, no-touch workflows. From simple notification triggers to complex multi-step pipelines with OpenAI, webhooks, and data routing. 15 production scenarios built, 2,500+ executions delivered.",
+    tags: ["Make.com", "CRM Integration", "Webhooks", "API Routing", "OpenAI", "Zapier"],
+  },
 ];
 
 const TOOLS_TICKER = [
