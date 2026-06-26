@@ -625,66 +625,26 @@ export default function Home() {
             initial="hidden"
             animate="visible"
             variants={stagger}
-            className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-12"
+            className="max-w-4xl"
           >
-            {/* Left: Text content */}
-            <div className="max-w-2xl">
-              {/* Location badge */}
-              <motion.div variants={fadeUp} className="mb-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card text-sm text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5 text-primary" />
-                Available for Remote Work · Bohol, Philippines
-              </motion.div>
+            {/* Location badge */}
+            <motion.div variants={fadeUp} className="mb-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card text-sm text-muted-foreground">
+              <MapPin className="h-3.5 w-3.5 text-primary" />
+              Available for Remote Work · Bohol, Philippines
+            </motion.div>
 
-              {/* Name */}
-              <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-display font-bold leading-[1.05] mb-4">
+            {/* Name + Photo inline */}
+            <motion.div variants={fadeUp} className="flex items-center gap-6 mb-4">
+              <h1 className="text-5xl md:text-7xl font-display font-bold leading-[1.05]">
                 Mark{" "}
                 <span className="gradient-text">Raven</span>
                 <br />
                 Cañete
-              </motion.h1>
-
-              {/* Typewriter titles */}
-              <motion.div variants={fadeUp} className="h-8 mb-6">
-                <p className="text-lg md:text-xl font-mono text-primary typewriter-caret">
-                  {typedTitle}
-                </p>
-              </motion.div>
-
-              {/* Subtitle */}
-              <motion.p variants={fadeUp} className="text-muted-foreground text-lg leading-8 max-w-2xl mb-10">
-                Building scalable operations systems, automating workflows with Make.com, and delivering measurable results across BPO, property management, and digital agency environments.
-              </motion.p>
-
-              {/* CTAs */}
-              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8"
-                  onClick={() => scrollTo("#projects")}
-                >
-                  View Projects <ArrowUpRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-border hover:bg-secondary font-semibold px-8"
-                  onClick={() => scrollTo("#contact")}
-                >
-                  Let's Connect
-                </Button>
-              </motion.div>
-            </div>
-
-            {/* Right: Profile photo */}
-            <motion.div
-              variants={fadeUp}
-              className="flex-shrink-0 flex justify-center lg:justify-end"
-            >
-              <div className="relative">
-                {/* Glow ring */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/40 to-[var(--color-gold)]/20 blur-2xl scale-110" aria-hidden="true" />
-                {/* Border ring */}
-                <div className="relative w-56 h-56 md:w-72 md:h-72 rounded-full p-1 bg-gradient-to-br from-primary via-[var(--color-gold)] to-primary/30">
+              </h1>
+              {/* Profile photo — sits right of the name */}
+              <div className="relative flex-shrink-0 self-center">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/40 to-[var(--color-gold)]/20 blur-xl scale-110" aria-hidden="true" />
+                <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full p-[3px] bg-gradient-to-br from-primary via-[var(--color-gold)] to-primary/30">
                   <div className="w-full h-full rounded-full overflow-hidden bg-card">
                     <img
                       src="/manus-storage/mark-raven-headshot_e58b09d3.jpg"
@@ -693,12 +653,42 @@ export default function Home() {
                     />
                   </div>
                 </div>
-                {/* Status badge */}
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-card border border-border text-xs font-medium text-muted-foreground whitespace-nowrap">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  Available for hire
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-card border border-border text-[10px] font-medium text-muted-foreground whitespace-nowrap">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Available
                 </div>
               </div>
+            </motion.div>
+
+            {/* Typewriter titles */}
+            <motion.div variants={fadeUp} className="h-8 mb-6">
+              <p className="text-lg md:text-xl font-mono text-primary typewriter-caret">
+                {typedTitle}
+              </p>
+            </motion.div>
+
+            {/* Subtitle */}
+            <motion.p variants={fadeUp} className="text-muted-foreground text-lg leading-8 max-w-2xl mb-10">
+              Building scalable operations systems, automating workflows with Make.com, and delivering measurable results across BPO, property management, and digital agency environments.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4">
+              <Button
+                size="lg"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8"
+                onClick={() => scrollTo("#projects")}
+              >
+                View Projects <ArrowUpRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-border hover:bg-secondary font-semibold px-8"
+                onClick={() => scrollTo("#contact")}
+              >
+                Let's Connect
+              </Button>
             </motion.div>
           </motion.div>
 
