@@ -398,6 +398,14 @@ const SERVICES = [
       "End-to-end recruitment: sourcing, screening, scheduling, virtual interviews, offer coordination, and onboarding. Proven across mass hiring at scale.",
     tags: ["Sourcing", "Screening", "Virtual Interviews", "Onboarding"],
   },
+  {
+    number: "04",
+    icon: Globe,
+    title: "Website Creation",
+    description:
+      "Design and development of professional websites and web applications — from property platforms and business landing pages to full-stack dashboards. Built with modern tech stacks including React, Next.js, TypeScript, and Firebase.",
+    tags: ["React", "Next.js", "TypeScript", "Firebase", "Full-Stack"],
+  },
 ];
 
 const TOOLS_TICKER = [
@@ -1090,6 +1098,7 @@ export default function Home() {
                   <option value="va">Virtual Assistance & Admin</option>
                   <option value="recruitment">Recruitment Coordination</option>
                   <option value="automation">Automation (Make.com)</option>
+                  <option value="website">Website Creation</option>
                   <option value="other">Other</option>
                 </select>
               </div>
