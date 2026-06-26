@@ -116,6 +116,7 @@ const PROJECTS = [
       "Full-stack UK property rental platform built with Next.js 14 (App Router) and Firebase. Features multi-role auth (landlord/tenant/admin), property listings with image upload, and role-based dashboards.",
     tags: ["Next.js 14", "Firebase", "TypeScript", "Firestore"],
     url: "https://github.com/markravencanete50-source/houseoflettings",
+    liveUrl: "https://www.houseoflettings.uk/",
     icon: "🏠",
     category: "Full-Stack Platform",
   },
@@ -126,6 +127,7 @@ const PROJECTS = [
       "Production-ready property maintenance management platform with multi-role system (Tenant, Property Manager, Contractor, Admin), real-time ticket tracking, push notifications, and analytics dashboard.",
     tags: ["React", "TypeScript", "Firebase", "Recharts"],
     url: "https://github.com/markravencanete50-source/easyhomefix",
+    liveUrl: "https://easyhomefix-three.vercel.app/login",
     icon: "🔧",
     category: "SaaS Platform",
   },
@@ -136,6 +138,7 @@ const PROJECTS = [
       "UK property management and landlord matching system with instant valuation, full assessment flows, and admin panel. Built with Next.js and Firebase for House of Lettings.",
     tags: ["Next.js", "Firebase", "TypeScript", "Tailwind"],
     url: "https://github.com/markravencanete50-source/Landlord-Matching",
+    liveUrl: "https://landlord-matching.vercel.app/",
     icon: "🔑",
     category: "Property Tech",
   },
@@ -146,6 +149,7 @@ const PROJECTS = [
       "House of Lettings property ledger — a financial tracking dashboard with money-in/money-out visibility per property. Built with Next.js, Space Grotesk typography, and Firebase auth.",
     tags: ["Next.js", "TypeScript", "Firebase", "Dashboard"],
     url: "https://github.com/markravencanete50-source/account-dashboard",
+    liveUrl: "https://account-dashboard-omega.vercel.app/login",
     icon: "📊",
     category: "Financial Dashboard",
   },
@@ -156,6 +160,7 @@ const PROJECTS = [
       "Full-stack business website for an outsourcing agency. Features Firebase-backed CMS, lead capture, AI assistant (Aria) powered by Groq, protected admin panel, and Firestore-driven content management.",
     tags: ["React 19", "Firebase", "TypeScript", "Framer Motion"],
     url: "https://github.com/markravencanete50-source/outsourcedge",
+    liveUrl: "https://www.outsourcedge.com/",
     icon: "🚀",
     category: "Business Website",
   },
@@ -840,16 +845,30 @@ export default function Home() {
                 ))}
               </div>
 
-              <a
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 font-medium transition-colors mt-auto"
-              >
-                <Github className="h-3.5 w-3.5" />
-                View on GitHub
-                <ArrowUpRight className="h-3 w-3" />
-              </a>
+              <div className="flex items-center gap-3 mt-auto flex-wrap">
+                <a
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+                >
+                  <Github className="h-3.5 w-3.5" />
+                  GitHub
+                  <ArrowUpRight className="h-3 w-3" />
+                </a>
+                {project.liveUrl && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm text-[var(--color-gold)] hover:text-[var(--color-gold)]/80 font-medium transition-colors"
+                  >
+                    <Globe className="h-3.5 w-3.5" />
+                    Live Demo
+                    <ArrowUpRight className="h-3 w-3" />
+                  </a>
+                )}
+              </div>
             </motion.article>
           ))}
         </div>
