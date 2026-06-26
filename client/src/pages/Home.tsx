@@ -633,32 +633,13 @@ export default function Home() {
               Available for Remote Work · Bohol, Philippines
             </motion.div>
 
-            {/* Name + Photo inline */}
-            <motion.div variants={fadeUp} className="flex items-center gap-6 mb-4">
-              <h1 className="text-5xl md:text-7xl font-display font-bold leading-[1.05]">
-                Mark{" "}
-                <span className="gradient-text">Raven</span>
-                <br />
-                Cañete
-              </h1>
-              {/* Profile photo — sits right of the name */}
-              <div className="relative flex-shrink-0 self-center">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/40 to-[var(--color-gold)]/20 blur-xl scale-110" aria-hidden="true" />
-                <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full p-[3px] bg-gradient-to-br from-primary via-[var(--color-gold)] to-primary/30">
-                  <div className="w-full h-full rounded-full overflow-hidden bg-card">
-                    <img
-                      src="/manus-storage/mark-raven-headshot_e58b09d3.jpg"
-                      alt="Mark Raven Cañete"
-                      className="w-full h-full object-cover object-top"
-                    />
-                  </div>
-                </div>
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-card border border-border text-[10px] font-medium text-muted-foreground whitespace-nowrap">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  Available
-                </div>
-              </div>
-            </motion.div>
+            {/* Name */}
+            <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl font-display font-bold leading-[1.05] mb-4">
+              Mark{" "}
+              <span className="gradient-text">Raven</span>
+              <br />
+              Cañete
+            </motion.h1>
 
             {/* Typewriter titles */}
             <motion.div variants={fadeUp} className="h-8 mb-6">
