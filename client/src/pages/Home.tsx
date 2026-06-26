@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView, type Variants } from "framer-motion";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { submitContactForm } from "@/lib/firebase";
 import {
   ArrowUpRight, Github, Mail, MessageCircle, Linkedin, ExternalLink,
   MapPin, Briefcase, Zap, Users, FileText, Settings, ChevronDown,
@@ -500,18 +501,7 @@ export default function Home() {
   const [contactForm, setContactForm] = useState({ name: "", email: "", subject: "", message: "", service: "" });
   const [formSubmitting, setFormSubmitting] = useState(false);
 
-  const submitContact = trpc.contact.submit.useMutation({
-    onSuccess: () => {
-      toast.success("Message sent! I'll get back to you soon.");
-      setContactForm({ name: "", email: "", subject: "", message: "", service: "" });
-      setFormSubmitting(false);
-    },
-    onError: (err) => {
-      toast.error("Failed to send. Please try again or email me directly.");
-      setFormSubmitting(false);
-      console.error(err);
-    },
-  });
+  // Firebase Firestore contact submission
 
   /* Track active section on scroll */
   useEffect(() => {
@@ -531,14 +521,28 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactForm.name || !contactForm.email || !contactForm.message) {
       toast.error("Please fill in all required fields.");
       return;
     }
     setFormSubmitting(true);
-    submitContact.mutate(contactForm);
+    try {
+      await submitContactForm({
+        name: contactForm.name,
+        email: contactForm.email,
+        service: contactForm.service,
+        message: contactForm.message,
+      });
+      toast.success("Message sent! I'll get back to you soon.");
+      setContactForm({ name: "", email: "", subject: "", message: "", service: "" });
+    } catch (err) {
+      toast.error("Failed to send. Please try again or email me directly.");
+      console.error(err);
+    } finally {
+      setFormSubmitting(false);
+    }
   };
 
   const scrollTo = (href: string) => {
