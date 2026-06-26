@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, type Variants } from "framer-motion";
-import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { submitContactForm } from "@/lib/firebase";
 import {
