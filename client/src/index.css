@@ -133,12 +133,36 @@
     background-clip: text;
   }
 
-  /* Card with subtle border */
+  /* Card with subtle border + cursor spotlight (driven by --mx/--my from JS) */
   .card-surface {
+    position: relative;
     background-color: var(--color-card);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
+  }
+
+  .card-surface::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      320px circle at var(--mx, 50%) var(--my, 50%),
+      oklch(0.72 0.18 195 / 0.07),
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+
+  .card-surface:hover::after {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    .card-surface::after { display: none; }
   }
 
   /* Glow effect */
@@ -262,3 +286,55 @@
 
 /* ── Framer Motion viewport fix ────────────────────────────────────────────── */
 [data-framer-component-type] { will-change: transform, opacity; }
+
+/* ── Ambient background (neural circuit) ───────────────────────────────────── */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Faint blueprint grid, fading out toward the edges */
+.ambient-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background-image:
+    linear-gradient(var(--color-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, black 30%, transparent 100%);
+}
+
+/* Slow-drifting glow orbs */
+.ambient-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  will-change: transform;
+}
+.ambient-orb-1 {
+  width: 560px; height: 560px; top: -12%; left: -8%;
+  background: var(--color-primary); opacity: 0.10;
+  animation: orb-drift-1 26s ease-in-out infinite alternate;
+}
+.ambient-orb-2 {
+  width: 480px; height: 480px; bottom: -14%; right: -6%;
+  background: var(--color-gold); opacity: 0.06;
+  animation: orb-drift-2 32s ease-in-out infinite alternate;
+}
+.ambient-orb-3 {
+  width: 380px; height: 380px; top: 40%; left: 55%;
+  background: var(--color-primary); opacity: 0.05;
+  animation: orb-drift-3 38s ease-in-out infinite alternate;
+}
+@keyframes orb-drift-1 { to { transform: translate(12vw, 10vh) scale(1.15); } }
+@keyframes orb-drift-2 { to { transform: translate(-10vw, -12vh) scale(1.1); } }
+@keyframes orb-drift-3 { to { transform: translate(-14vw, 8vh) scale(0.9); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-orb { animation: none; }
+}

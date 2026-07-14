@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, type Variants } from "framer-motion";
+import { motion, useInView, useScroll, type Variants } from "framer-motion";
 import { toast } from "sonner";
 import { submitContactForm } from "@/lib/firebase";
 import { trackPageview, trackClick, trackSubmission } from "@/lib/analytics";
+import AmbientBackground from "@/components/AmbientBackground";
 import {
   ArrowUpRight, Github, Mail, MessageCircle, Linkedin, ExternalLink,
   MapPin, Briefcase, Zap, Users, FileText, Settings, ChevronDown,
@@ -534,6 +535,31 @@ function SectionHeader({ eyebrow, title, subtitle }: { eyebrow: string; title: R
   );
 }
 
+/* ── Magnetic hover wrapper (buttons subtly follow the cursor) ─────────────── */
+function Magnetic({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  return (
+    <motion.div
+      ref={ref}
+      className={`inline-block ${className}`}
+      animate={{ x: offset.x, y: offset.y }}
+      transition={{ type: "spring", stiffness: 200, damping: 18, mass: 0.4 }}
+      onMouseMove={(e) => {
+        const r = ref.current?.getBoundingClientRect();
+        if (!r) return;
+        setOffset({
+          x: (e.clientX - (r.left + r.width / 2)) * 0.15,
+          y: (e.clientY - (r.top + r.height / 2)) * 0.2,
+        });
+      }}
+      onMouseLeave={() => setOffset({ x: 0, y: 0 })}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 /* ── Main component ────────────────────────────────────────────────────────── */
 export default function Home() {
   const typedTitle = useTypewriter(TITLES, 55, 2200);
@@ -544,9 +570,25 @@ export default function Home() {
 
   // Firebase Firestore contact submission
 
+  /* Scroll progress for the top bar */
+  const { scrollYProgress } = useScroll();
+
   /* Record a page view once on mount */
   useEffect(() => {
     trackPageview();
+  }, []);
+
+  /* Cursor spotlight on cards — updates --mx/--my consumed by .card-surface::after */
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      const el = (e.target as HTMLElement | null)?.closest?.(".card-surface") as HTMLElement | null;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+      el.style.setProperty("--my", `${e.clientY - r.top}px`);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
   /* Track active section on scroll */
@@ -601,7 +643,20 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="min-h-screen text-foreground overflow-x-hidden">
+
+      {/* ── AMBIENT BACKGROUND (neural circuit) ────────────────────────────── */}
+      <AmbientBackground />
+
+      {/* ── SCROLL PROGRESS ────────────────────────────────────────────────── */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[2px] z-[60] origin-left"
+        style={{
+          scaleX: scrollYProgress,
+          background: "linear-gradient(90deg, var(--color-primary), var(--color-gold))",
+        }}
+        aria-hidden="true"
+      />
 
       {/* ── STICKY NAV ─────────────────────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
@@ -657,22 +712,7 @@ export default function Home() {
 
       {/* ── HERO ───────────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
-        {/* Background grid */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: "linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-          aria-hidden="true"
-        />
-        {/* Radial glow */}
-        <div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-[0.07]"
-          style={{ background: "radial-gradient(circle, var(--color-primary) 0%, transparent 70%)" }}
-          aria-hidden="true"
-        />
-
+        {/* Background handled by the site-wide AmbientBackground */}
         <div className="container relative z-10 py-24">
           <motion.div
             initial="hidden"
@@ -708,21 +748,25 @@ export default function Home() {
 
             {/* CTAs */}
             <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8"
-                onClick={() => scrollTo("#projects")}
-              >
-                View Projects <ArrowUpRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-border hover:bg-secondary font-semibold px-8"
-                onClick={() => scrollTo("#contact")}
-              >
-                Let's Connect
-              </Button>
+              <Magnetic className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8"
+                  onClick={() => scrollTo("#projects")}
+                >
+                  View Projects <ArrowUpRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Magnetic>
+              <Magnetic className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto border-border hover:bg-secondary font-semibold px-8"
+                  onClick={() => scrollTo("#contact")}
+                >
+                  Let's Connect
+                </Button>
+              </Magnetic>
             </motion.div>
           </motion.div>
 
@@ -740,7 +784,7 @@ export default function Home() {
       </section>
 
       {/* ── STATS BAR ──────────────────────────────────────────────────────── */}
-      <div className="border-y border-border bg-card">
+      <div className="border-y border-border bg-card/60">
         <div className="container grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border">
           {STATS.map((stat) => (
             <div key={stat.label} className="py-8 px-6 text-center">
@@ -752,7 +796,7 @@ export default function Home() {
       </div>
 
       {/* ── ABOUT ──────────────────────────────────────────────────────────── */}
-      <Section id="about" className="bg-background">
+      <Section id="about">
         <SectionHeader
           eyebrow="01 — Who I Am"
           title={<>Operations Leader. <span className="gradient-text">Systems Thinker.</span></>}
@@ -857,7 +901,7 @@ export default function Home() {
       </Section>
 
       {/* ── PROJECTS ───────────────────────────────────────────────────────── */}
-      <Section id="projects" className="bg-background">
+      <Section id="projects">
         <SectionHeader
           eyebrow="03 — Featured Projects"
           title={<>Work that speaks <span className="gradient-text">for itself.</span></>}
@@ -1007,7 +1051,7 @@ export default function Home() {
       </Section>
 
       {/* ── SKILLS ─────────────────────────────────────────────────────────── */}
-      <Section id="skills" className="bg-background">
+      <Section id="skills">
         <SectionHeader
           eyebrow="05 — Capabilities"
           title={<>Skills forged in <span className="gradient-text">real operations.</span></>}
@@ -1120,7 +1164,7 @@ export default function Home() {
       </Section>
 
       {/* ── CONTACT ────────────────────────────────────────────────────────── */}
-      <Section id="contact" className="bg-background">
+      <Section id="contact">
         <SectionHeader
           eyebrow="07 — Get In Touch"
           title={<>Ready to build <span className="gradient-text">something great?</span></>}
