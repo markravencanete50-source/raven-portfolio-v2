@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import {
-  onAuthStateChanged, signInWithEmailAndPassword, signOut, type User,
+  GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User,
 } from "firebase/auth";
 import {
   Activity, ArrowLeft, BarChart3, Eye, Lock, LogOut, MousePointerClick,
-  RefreshCw, Send, TrendingUp, Users,
+  RefreshCw, Send, ShieldAlert, TrendingUp, Users,
 } from "lucide-react";
 import {
   fetchAnalyticsEvents, type AnalyticsEvent,
 } from "@/lib/analytics";
-import { auth, fetchSubmissions, type StoredSubmission } from "@/lib/firebase";
+import { auth, fetchSubmissions, fetchUserRole, type StoredSubmission } from "@/lib/firebase";
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 function toDate(ts: { toDate?: () => Date } | null | undefined): Date | null {
@@ -35,28 +35,25 @@ function shortRef(ref: string): string {
   }
 }
 
-/* ── Login gate (Firebase Auth) ─────────────────────────────────────────── */
+/* ── Login gate (Google sign-in) ────────────────────────────────────────── */
 function Gate() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const signIn = async () => {
     setBusy(true);
     setError(null);
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password);
+      await signInWithPopup(auth, new GoogleAuthProvider());
       // onAuthStateChanged in the parent flips to the dashboard.
     } catch (err) {
       const code = (err as { code?: string })?.code || "";
-      if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") {
-        setError("Incorrect email or password.");
-      } else if (code === "auth/too-many-requests") {
-        setError("Too many attempts. Try again shortly.");
+      if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
+        setError(null); // user dismissed — no need to alarm
       } else if (code === "auth/operation-not-allowed" || code === "auth/configuration-not-found") {
-        setError("Email/Password sign-in isn't enabled in Firebase yet.");
+        setError("Google sign-in isn't enabled in Firebase yet.");
+      } else if (code === "auth/unauthorized-domain") {
+        setError("This domain isn't authorized for sign-in in Firebase Auth settings.");
       } else {
         setError("Couldn't sign in. Please try again.");
       }
@@ -68,43 +65,56 @@ function Gate() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
-      <form onSubmit={submit} className="card-surface w-full max-w-sm p-8">
+      <div className="card-surface w-full max-w-sm p-8">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-5">
           <Lock className="h-6 w-6" />
         </div>
         <h1 className="font-display text-2xl font-bold mb-1">Admin Access</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Sign in to view your site analytics.
+          Sign in with your admin Google account to view your site analytics.
         </p>
-        <input
-          type="email"
-          autoFocus
-          autoComplete="username"
-          value={email}
-          onChange={(e) => { setEmail(e.target.value); setError(null); }}
-          placeholder="Email"
-          className="w-full h-10 rounded-md border border-border bg-secondary px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring mb-3"
-        />
-        <input
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => { setPassword(e.target.value); setError(null); }}
-          placeholder="Password"
-          className="w-full h-10 rounded-md border border-border bg-secondary px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring mb-3"
-        />
         {error && <p className="text-sm text-red-400 mb-3">{error}</p>}
         <button
-          type="submit"
+          onClick={() => void signIn()}
           disabled={busy}
-          className="w-full h-10 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="w-full h-11 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 inline-flex items-center justify-center gap-2"
         >
-          {busy ? "Signing in…" : "Sign in"}
+          {busy ? "Opening…" : (
+            <>
+              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M21.35 11.1H12v2.99h5.36c-.23 1.48-1.64 4.33-5.36 4.33-3.22 0-5.85-2.67-5.85-5.96S8.78 6.5 12 6.5c1.83 0 3.06.78 3.76 1.45l2.56-2.47C16.74 3.9 14.6 3 12 3 6.98 3 2.9 7.08 2.9 12s4.08 9 9.1 9c5.26 0 8.74-3.7 8.74-8.9 0-.6-.07-1.05-.16-1.5z"/>
+              </svg>
+              Sign in with Google
+            </>
+          )}
         </button>
         <Link href="/" className="mt-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
           <ArrowLeft className="h-3.5 w-3.5" /> Back to site
         </Link>
-      </form>
+      </div>
+    </div>
+  );
+}
+
+/* ── Access-denied screen (signed in, but not an admin) ─────────────────── */
+function Denied({ email }: { email: string | null }) {
+  return (
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
+      <div className="card-surface w-full max-w-sm p-8 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-red-400 mb-5">
+          <ShieldAlert className="h-6 w-6" />
+        </div>
+        <h1 className="font-display text-2xl font-bold mb-1">Not authorized</h1>
+        <p className="text-sm text-muted-foreground mb-6">
+          {email ? <><span className="text-foreground">{email}</span> isn't an admin account.</> : "This account isn't an admin."}
+        </p>
+        <button
+          onClick={() => void signOut(auth)}
+          className="w-full h-10 rounded-md border border-border text-sm font-semibold hover:border-primary/40 transition-colors"
+        >
+          Sign out
+        </button>
+      </div>
     </div>
   );
 }
@@ -148,6 +158,7 @@ function BarList({ rows }: { rows: { label: string; count: number }[] }) {
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
+  const [role, setRole] = useState<"checking" | "admin" | "denied">("checking");
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
   const [subs, setSubs] = useState<StoredSubmission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -172,11 +183,31 @@ export default function Admin() {
     return onAuthStateChanged(auth, (u) => {
       setUser(u);
       setAuthReady(true);
+      setRole("checking");
     });
   }, []);
 
+  // Verify the signed-in user carries an admin role, then load data.
   useEffect(() => {
-    if (user) void load();
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetchUserRole(user.uid);
+        if (cancelled) return;
+        if (r === "admin") {
+          setRole("admin");
+          void load();
+        } else {
+          setRole("denied");
+        }
+      } catch (err) {
+        // Reads blocked by rules, or no user doc — treat as not authorized.
+        if (!cancelled) setRole("denied");
+        console.error(err);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [user]);
 
   const metrics = useMemo(() => {
@@ -237,6 +268,14 @@ export default function Admin() {
     );
   }
   if (!user) return <Gate />;
+  if (role === "checking") {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <p className="text-sm text-muted-foreground">Verifying access…</p>
+      </div>
+    );
+  }
+  if (role === "denied") return <Denied email={user.email} />;
 
   const maxDay = Math.max(1, ...metrics.days.map((d) => d.count));
 

@@ -4,6 +4,8 @@ import {
   getFirestore,
   collection,
   addDoc,
+  doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -51,4 +53,10 @@ export async function fetchSubmissions(): Promise<StoredSubmission[]> {
     query(collection(db, "contact_submissions"), orderBy("createdAt", "desc")),
   );
   return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<StoredSubmission, "id">) }));
+}
+
+/** Read the `role` for a signed-in user from the `user` collection. */
+export async function fetchUserRole(uid: string): Promise<string | null> {
+  const snap = await getDoc(doc(db, "user", uid));
+  return snap.exists() ? ((snap.data().role as string | undefined) ?? null) : null;
 }
