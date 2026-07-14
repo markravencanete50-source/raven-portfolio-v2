@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView, type Variants } from "framer-motion";
 import { toast } from "sonner";
 import { submitContactForm } from "@/lib/firebase";
+import { trackPageview, trackClick, trackSubmission } from "@/lib/analytics";
 import {
   ArrowUpRight, Github, Mail, MessageCircle, Linkedin, ExternalLink,
   MapPin, Briefcase, Zap, Users, FileText, Settings, ChevronDown,
@@ -543,6 +544,11 @@ export default function Home() {
 
   // Firebase Firestore contact submission
 
+  /* Record a page view once on mount */
+  useEffect(() => {
+    trackPageview();
+  }, []);
+
   /* Track active section on scroll */
   useEffect(() => {
     const sections = NAV_LINKS.map((l) => l.href.replace("#", ""));
@@ -573,8 +579,10 @@ export default function Home() {
         name: contactForm.name,
         email: contactForm.email,
         service: contactForm.service,
+        subject: contactForm.subject,
         message: contactForm.message,
       });
+      trackSubmission(contactForm.service || "unspecified");
       toast.success("Message sent! I'll get back to you soon.");
       setContactForm({ name: "", email: "", subject: "", message: "", service: "" });
     } catch (err) {
@@ -585,7 +593,8 @@ export default function Home() {
     }
   };
 
-  const scrollTo = (href: string) => {
+  const scrollTo = (href: string, label?: string) => {
+    trackClick(label ?? `nav:${href}`);
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
     setMobileMenuOpen(false);
@@ -894,6 +903,7 @@ export default function Home() {
                   href={project.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackClick(`github:${project.name}`)}
                   className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
                 >
                   <Github className="h-3.5 w-3.5" />
@@ -905,6 +915,7 @@ export default function Home() {
                     href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackClick(`live-demo:${project.name}`)}
                     className="inline-flex items-center gap-1.5 text-sm text-[var(--color-gold)] hover:text-[var(--color-gold)]/80 font-medium transition-colors"
                   >
                     <Globe className="h-3.5 w-3.5" />
@@ -1079,7 +1090,7 @@ export default function Home() {
 
               <a
                 href="#contact"
-                onClick={(e) => { e.preventDefault(); scrollTo("#contact"); }}
+                onClick={(e) => { e.preventDefault(); scrollTo("#contact", `enquire:${category.title}`); }}
                 className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-lg border border-primary/40 text-primary text-sm font-semibold hover:bg-primary/10 transition-colors mt-auto"
               >
                 Enquire <ArrowUpRight className="h-4 w-4" />

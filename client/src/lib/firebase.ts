@@ -1,5 +1,14 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+  type Timestamp,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCQUSHtop2AWmQ8RbKk_dyBhftzzLy529U",
@@ -18,6 +27,7 @@ export interface ContactSubmission {
   name: string;
   email: string;
   service: string;
+  subject?: string;
   message: string;
 }
 
@@ -26,4 +36,17 @@ export async function submitContactForm(data: ContactSubmission): Promise<void> 
     ...data,
     createdAt: serverTimestamp(),
   });
+}
+
+export interface StoredSubmission extends ContactSubmission {
+  id: string;
+  createdAt: Timestamp | null;
+}
+
+/** Read all contact submissions for the admin dashboard (newest first). */
+export async function fetchSubmissions(): Promise<StoredSubmission[]> {
+  const snap = await getDocs(
+    query(collection(db, "contact_submissions"), orderBy("createdAt", "desc")),
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<StoredSubmission, "id">) }));
 }
