@@ -6,7 +6,8 @@ import {
   ArrowUpRight, Github, Mail, MessageCircle, Linkedin, ExternalLink,
   MapPin, Briefcase, Zap, Users, FileText, Settings, ChevronDown,
   Code2, Globe, Star, Activity, Clock, CheckCircle2, PauseCircle,
-  Send, Phone, Menu, X
+  Send, Phone, Menu, X,
+  Bot, Server, Sparkles, LayoutDashboard, Workflow
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -378,46 +379,86 @@ const SKILLS = [
   },
 ];
 
-const SERVICES = [
+const SERVICE_CATEGORIES = [
   {
     number: "01",
-    icon: Settings,
-    title: "Operations Management",
-    description:
-      "Full-cycle operations support — SOP creation, workflow automation, KPI monitoring, and team performance systems. BPO-grade discipline applied to remote teams.",
-    tags: ["SOPs", "KPI Tracking", "Process Design", "Remote Ops"],
+    icon: Code2,
+    title: "Web Development",
+    blurb: "Conversion-focused sites, marketing pages, and custom web platforms — built end to end.",
+    items: [
+      { name: "Landing pages", desc: "Conversion-focused, campaign & lead-gen ready", price: "$550–$1,200" },
+      { name: "Business websites", desc: "Multi-page brand & corporate sites", price: "$1,200–$3,400" },
+      { name: "Marketing websites", desc: "SEO-ready, campaign-driven", price: "$1,600–$4,000" },
+      { name: "Web apps & custom platforms", desc: "Client portals, listing platforms, member areas", price: "$4,000–$16,000+" },
+      { name: "Booking & multi-step forms", desc: "Enquiries, applications, valuations", price: "$450–$1,600" },
+      { name: "Mobile optimization, performance & SEO", desc: "Speed, responsiveness, search-readiness", price: "$400–$1,200" },
+    ],
   },
   {
     number: "02",
-    icon: Briefcase,
-    title: "Virtual Assistance & Admin",
-    description:
-      "Executive-level VA support — calendar management, CRM maintenance, data entry, reporting, email management, and document production, delivered with precision.",
-    tags: ["Calendar Mgmt", "CRM", "Email Mgmt", "Reporting"],
+    icon: LayoutDashboard,
+    title: "CRM & Dashboards",
+    blurb: "Custom pipelines, admin panels, and real-time reporting tailored to how the business runs.",
+    items: [
+      { name: "Custom CRM builds", desc: "Tailored to the client's own pipeline", price: "$3,000–$10,500+" },
+      { name: "Operations dashboards", desc: "Real-time business & ops visibility", price: "$1,000–$2,500" },
+      { name: "Admin dashboards", desc: "Manage users, content, listings & records", price: "$1,200–$5,000" },
+      { name: "Client & customer portals", desc: "Self-service access for end users", price: "$1,000–$5,500" },
+      { name: "Reporting & analytics dashboards", desc: "Metrics that matter, at a glance", price: "$1,200–$2,500" },
+    ],
   },
   {
     number: "03",
-    icon: Users,
-    title: "Recruitment Coordination",
-    description:
-      "End-to-end recruitment: sourcing, screening, scheduling, virtual interviews, offer coordination, and onboarding. Proven across mass hiring at scale.",
-    tags: ["Sourcing", "Screening", "Virtual Interviews", "Onboarding"],
+    icon: Workflow,
+    title: "Automation",
+    blurb: "No-touch workflows connecting CRM, email, calendar, forms, and APIs — Make.com, Pabbly, Zapier.",
+    items: [
+      { name: "Lead capture & routing", desc: "Never lose an inbound lead", price: "$250–$1,100" },
+      { name: "CRM automation", desc: "Data sync, pipeline updates, record creation", price: "$550–$2,000" },
+      { name: "Business & process automation", desc: "Make.com, Pabbly, Zapier", price: "$650–$3,400" },
+      { name: "Email automation & sequences", desc: "Nurture and follow-up on autopilot", price: "$350–$1,500" },
+      { name: "Meeting-notes automation", desc: "Transcripts → tasks, CRM entries, drafts", price: "$550–$1,800" },
+      { name: "Reporting & document automation", desc: "Recurring reports generated automatically", price: "$550–$2,000" },
+      { name: "Tool integrations", desc: "Calendly, Gmail/Outlook, Teamwork, Capsule, Drive & more", price: "$250–$800 ea" },
+    ],
   },
   {
     number: "04",
-    icon: Globe,
-    title: "Website Creation",
-    description:
-      "Design and development of professional websites and web applications — from property platforms and business landing pages to full-stack dashboards. Built with modern tech stacks including React, Next.js, TypeScript, and Firebase.",
-    tags: ["React", "Next.js", "TypeScript", "Firebase", "Full-Stack"],
+    icon: Bot,
+    title: "AI Agents & AI Solutions",
+    blurb: "Voice, sales, marketing, and email agents plus chatbots and data extraction — built to work 24/7.",
+    items: [
+      { name: "AI inbound call agent", desc: "Voice receptionist that answers & handles calls", price: "$1,100–$4,000 +usage" },
+      { name: "AI sales agent", desc: "Qualifies and follows up on leads", price: "$950–$3,400" },
+      { name: "AI marketing agent", desc: "Content & campaign support", price: "$800–$2,700" },
+      { name: "AI email agent", desc: "Auto-drafts and responds", price: "$650–$2,400" },
+      { name: "Website AI chatbot", desc: "Support & lead qualification, 24/7", price: "$650–$2,700" },
+      { name: "AI data & content extraction", desc: "Structured data from unstructured sources", price: "$650–$3,400" },
+    ],
   },
   {
     number: "05",
-    icon: Zap,
-    title: "Automation (Make.com)",
-    description:
-      "End-to-end automation design and build using Make.com — connecting your CRM, email platform, calendar, forms, and APIs into seamless, no-touch workflows. From simple notification triggers to complex multi-step pipelines with OpenAI, webhooks, and data routing. 15 production scenarios built, 2,500+ executions delivered.",
-    tags: ["Make.com", "CRM Integration", "Webhooks", "API Routing", "OpenAI", "Zapier"],
+    icon: Server,
+    title: "Setup & Infrastructure",
+    blurb: "Domains, hosting, databases, and integrations — the foundation delivered ready to hand off.",
+    items: [
+      { name: "Domain, DNS & business email setup", desc: "", price: "$150–$450" },
+      { name: "Hosting & deployment", desc: "Vercel", price: "$200–$650" },
+      { name: "Database & backend", desc: "Firebase / Firestore", price: "$400–$1,500" },
+      { name: "Media & image handling", desc: "Cloudinary", price: "$200–$650" },
+      { name: "Systems & API integration", desc: "", price: "$400–$2,000" },
+    ],
+  },
+  {
+    number: "06",
+    icon: Sparkles,
+    title: "Premium & Specialty",
+    blurb: "High-impact builds — cinematic web, ops-intelligence tools, and automation consulting.",
+    items: [
+      { name: "WebGL & cinematic web experiences", desc: "Interactive, high-impact visuals", price: "$3,000–$13,500+" },
+      { name: "AI-powered internal & ops-intelligence tools", desc: "", price: "$4,000–$16,000+" },
+      { name: "Automation audits & workflow consulting", desc: "From a BPO & operations background", price: "$550–$2,000" },
+    ],
   },
 ];
 
@@ -999,31 +1040,43 @@ export default function Home() {
       {/* ── SERVICES ───────────────────────────────────────────────────────── */}
       <Section id="services" className="bg-card/30">
         <SectionHeader
-          eyebrow="06 — What I Offer"
-          title={<>Services tailored <span className="gradient-text">for your growth.</span></>}
-          subtitle="Whether you need an operations partner, a project lead, or a capable VA — here's how I deliver value."
+          eyebrow="06 — Services & Pricing"
+          title={<>Websites, systems & AI — <span className="gradient-text">built end to end.</span></>}
+          subtitle="Web development, custom systems, workflow automation, and AI agents — delivered ready to hand off to your clients. White-label ready: you keep the relationship, I handle delivery."
         />
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {SERVICES.map((service) => (
+        <div className="grid lg:grid-cols-2 gap-6">
+          {SERVICE_CATEGORIES.map((category) => (
             <motion.article
-              key={service.number}
+              key={category.number}
               variants={fadeUp}
               className="card-surface p-7 flex flex-col hover:border-primary/40 transition-colors duration-300 group"
             >
-              <div className="flex items-start justify-between mb-5">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
-                  <service.icon className="h-6 w-6" />
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors shrink-0">
+                    <category.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-display font-semibold text-lg text-foreground">{category.title}</h3>
                 </div>
-                <span className="font-mono text-3xl font-bold text-border">{service.number}</span>
+                <span className="font-mono text-3xl font-bold text-border">{category.number}</span>
               </div>
-              <h3 className="font-display font-semibold text-lg text-foreground mb-3">{service.title}</h3>
-              <p className="text-sm text-muted-foreground leading-6 flex-1 mb-5">{service.description}</p>
-              <div className="flex flex-wrap gap-1.5 mb-6">
-                {service.tags.map((tag) => (
-                  <span key={tag} className="tag text-[0.65rem]">{tag}</span>
+              <p className="text-sm text-muted-foreground leading-6 mb-5">{category.blurb}</p>
+
+              <ul className="divide-y divide-border/60 mb-6">
+                {category.items.map((item) => (
+                  <li key={item.name} className="flex items-start justify-between gap-4 py-3">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground">{item.name}</p>
+                      {item.desc && (
+                        <p className="text-xs text-muted-foreground leading-5 mt-0.5">{item.desc}</p>
+                      )}
+                    </div>
+                    <span className="font-mono text-xs font-semibold text-primary whitespace-nowrap shrink-0 mt-0.5">{item.price}</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
+
               <a
                 href="#contact"
                 onClick={(e) => { e.preventDefault(); scrollTo("#contact"); }}
@@ -1034,6 +1087,25 @@ export default function Home() {
             </motion.article>
           ))}
         </div>
+
+        {/* Pricing note */}
+        <motion.div
+          variants={fadeUp}
+          className="card-surface mt-6 p-6 flex flex-col sm:flex-row sm:items-start gap-4"
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <div>
+            <h4 className="font-display font-semibold text-foreground mb-1">How pricing works</h4>
+            <p className="text-sm text-muted-foreground leading-6">
+              Every project is scoped individually — pricing depends on complexity, market value, and the
+              tools involved. Share the client's goal and budget and I'll tailor a quote.
+              <span className="text-foreground font-medium"> White-label ready</span> — you keep the client
+              relationship, I handle delivery.
+            </p>
+          </div>
+        </motion.div>
       </Section>
 
       {/* ── CONTACT ────────────────────────────────────────────────────────── */}
@@ -1124,11 +1196,12 @@ export default function Home() {
                   className="w-full h-9 rounded-md border border-border bg-secondary px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="">Select a service...</option>
-                  <option value="operations">Operations Management</option>
-                  <option value="va">Virtual Assistance & Admin</option>
-                  <option value="recruitment">Recruitment Coordination</option>
-                  <option value="automation">Automation (Make.com)</option>
-                  <option value="website">Website Creation</option>
+                  <option value="web-development">Web Development</option>
+                  <option value="crm-dashboards">CRM & Dashboards</option>
+                  <option value="automation">Automation</option>
+                  <option value="ai-agents">AI Agents & AI Solutions</option>
+                  <option value="setup-infrastructure">Setup & Infrastructure</option>
+                  <option value="premium-specialty">Premium & Specialty</option>
                   <option value="other">Other</option>
                 </select>
               </div>
