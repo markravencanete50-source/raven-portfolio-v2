@@ -1,17 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import {
+  onAuthStateChanged, signInWithEmailAndPassword, signOut, type User,
+} from "firebase/auth";
+import {
   Activity, ArrowLeft, BarChart3, Eye, Lock, LogOut, MousePointerClick,
   RefreshCw, Send, TrendingUp, Users,
 } from "lucide-react";
 import {
   fetchAnalyticsEvents, type AnalyticsEvent,
 } from "@/lib/analytics";
-import { fetchSubmissions, type StoredSubmission } from "@/lib/firebase";
-
-/* ── Config ─────────────────────────────────────────────────────────────── */
-const ADMIN_PASSCODE = import.meta.env.VITE_ADMIN_PASSCODE || "raven2026";
-const UNLOCK_KEY = "mp_admin_unlocked";
+import { auth, fetchSubmissions, type StoredSubmission } from "@/lib/firebase";
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
 function toDate(ts: { toDate?: () => Date } | null | undefined): Date | null {
@@ -36,18 +35,34 @@ function shortRef(ref: string): string {
   }
 }
 
-/* ── Passcode gate ──────────────────────────────────────────────────────── */
-function Gate({ onUnlock }: { onUnlock: () => void }) {
-  const [value, setValue] = useState("");
-  const [error, setError] = useState(false);
+/* ── Login gate (Firebase Auth) ─────────────────────────────────────────── */
+function Gate() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (value === ADMIN_PASSCODE) {
-      sessionStorage.setItem(UNLOCK_KEY, "1");
-      onUnlock();
-    } else {
-      setError(true);
+    setBusy(true);
+    setError(null);
+    try {
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+      // onAuthStateChanged in the parent flips to the dashboard.
+    } catch (err) {
+      const code = (err as { code?: string })?.code || "";
+      if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") {
+        setError("Incorrect email or password.");
+      } else if (code === "auth/too-many-requests") {
+        setError("Too many attempts. Try again shortly.");
+      } else if (code === "auth/operation-not-allowed" || code === "auth/configuration-not-found") {
+        setError("Email/Password sign-in isn't enabled in Firebase yet.");
+      } else {
+        setError("Couldn't sign in. Please try again.");
+      }
+      console.error(err);
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -59,22 +74,32 @@ function Gate({ onUnlock }: { onUnlock: () => void }) {
         </div>
         <h1 className="font-display text-2xl font-bold mb-1">Admin Access</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Enter the passcode to view your site analytics.
+          Sign in to view your site analytics.
         </p>
         <input
-          type="password"
+          type="email"
           autoFocus
-          value={value}
-          onChange={(e) => { setValue(e.target.value); setError(false); }}
-          placeholder="Passcode"
+          autoComplete="username"
+          value={email}
+          onChange={(e) => { setEmail(e.target.value); setError(null); }}
+          placeholder="Email"
           className="w-full h-10 rounded-md border border-border bg-secondary px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring mb-3"
         />
-        {error && <p className="text-sm text-red-400 mb-3">Incorrect passcode.</p>}
+        <input
+          type="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => { setPassword(e.target.value); setError(null); }}
+          placeholder="Password"
+          className="w-full h-10 rounded-md border border-border bg-secondary px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring mb-3"
+        />
+        {error && <p className="text-sm text-red-400 mb-3">{error}</p>}
         <button
           type="submit"
-          className="w-full h-10 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity"
+          disabled={busy}
+          className="w-full h-10 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
         >
-          Unlock
+          {busy ? "Signing in…" : "Sign in"}
         </button>
         <Link href="/" className="mt-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
           <ArrowLeft className="h-3.5 w-3.5" /> Back to site
@@ -121,7 +146,8 @@ function BarList({ rows }: { rows: { label: string; count: number }[] }) {
 
 /* ── Main dashboard ─────────────────────────────────────────────────────── */
 export default function Admin() {
-  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem(UNLOCK_KEY) === "1");
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
   const [subs, setSubs] = useState<StoredSubmission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -136,15 +162,22 @@ export default function Admin() {
       setSubs(sb);
     } catch (err) {
       console.error(err);
-      setError("Couldn't load data. Check your Firestore security rules allow reads on 'analytics_events' and 'contact_submissions'.");
+      setError("Couldn't load data. Check your Firestore security rules allow reads on 'analytics_events' and 'contact_submissions' for signed-in users.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (unlocked) void load();
-  }, [unlocked]);
+    return onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setAuthReady(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (user) void load();
+  }, [user]);
 
   const metrics = useMemo(() => {
     const pageviews = events.filter((e) => e.type === "pageview");
@@ -196,7 +229,14 @@ export default function Admin() {
     };
   }, [events, subs]);
 
-  if (!unlocked) return <Gate onUnlock={() => setUnlocked(true)} />;
+  if (!authReady) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <p className="text-sm text-muted-foreground">Loading…</p>
+      </div>
+    );
+  }
+  if (!user) return <Gate />;
 
   const maxDay = Math.max(1, ...metrics.days.map((d) => d.count));
 
@@ -220,10 +260,10 @@ export default function Admin() {
               <ArrowLeft className="h-3.5 w-3.5" /> Site
             </Link>
             <button
-              onClick={() => { sessionStorage.removeItem(UNLOCK_KEY); setUnlocked(false); }}
+              onClick={() => void signOut(auth)}
               className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm hover:border-primary/40 transition-colors"
             >
-              <LogOut className="h-3.5 w-3.5" /> Lock
+              <LogOut className="h-3.5 w-3.5" /> Sign out
             </button>
           </div>
         </div>
