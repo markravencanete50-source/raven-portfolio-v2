@@ -40,17 +40,17 @@ const NAV_LINKS = [
 ];
 
 const TITLES = [
-  "Operations Lead",
-  "Automation Specialist",
-  "Project Coordinator",
-  "Administrative Professional",
+  "Full-Stack Web Developer",
+  "Automation Engineer",
+  "AI Solutions Builder",
+  "CRM & Systems Developer",
 ];
 
 const STATS = [
-  { value: "3+", label: "Years BPO Leadership" },
-  { value: "200+", label: "Hires Coordinated" },
-  { value: "15+", label: "Tools Mastered" },
+  { value: "6+", label: "Web Platforms Shipped" },
+  { value: "15+", label: "Production Automations" },
   { value: "1,900+", label: "Automation Runs" },
+  { value: "3+", label: "Years Ops Leadership" },
 ];
 
 const EXPERIENCE = [
@@ -743,7 +743,7 @@ export default function Home() {
 
             {/* Subtitle */}
             <motion.p variants={fadeUp} className="text-muted-foreground text-lg leading-8 max-w-2xl mb-10">
-              Building scalable operations systems, automating workflows with Make.com, and delivering measurable results across BPO, property management, and digital agency environments.
+              I build websites, custom platforms, workflow automations, and AI agents — designed, developed, and delivered end to end. White-label ready: you keep the client relationship, I handle the build.
             </motion.p>
 
             {/* CTAs */}
@@ -799,26 +799,26 @@ export default function Home() {
       <Section id="about">
         <SectionHeader
           eyebrow="01 — Who I Am"
-          title={<>Operations Leader. <span className="gradient-text">Systems Thinker.</span></>}
+          title={<>Developer. Automator. <span className="gradient-text">Systems Thinker.</span></>}
         />
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <motion.div variants={fadeUp} className="space-y-5 text-muted-foreground leading-7">
             <p>
-              With over 3 years embedded in BPO operations leadership, I've led high-performing teams, resolved complex escalations, and architected workflow systems that cut inefficiencies and elevate performance — most recently at Tech Mahindra, Cebu City.
+              I build for the web — full-stack platforms, custom CRMs and dashboards, booking systems, and AI-powered tools — using React, Next.js, TypeScript, and Firebase, deployed on Vercel. From a UK property rental platform to financial dashboards and business websites, every build ships production-ready: fast, responsive, and documented.
             </p>
             <p>
-              Today I bring that same precision to remote project management, automation engineering, and virtual assistance — helping businesses scale without the overhead. From building 15 production Make.com automations at 24fingers to developing TimeCRM for a UK property lettings company, I turn operational complexity into clean, documented processes.
+              What sets my work apart is where I came from: 3+ years of BPO operations leadership. I understand the workflows behind the software — which is why my builds come with the automations to run them. 15 production Make.com scenarios and 1,900+ executions for a UK digital agency, wiring CRMs, calendars, email, and OpenAI into no-touch pipelines.
             </p>
             <blockquote className="border-l-2 border-primary pl-4 italic text-foreground/80">
-              "I don't just manage tasks — I build the systems that make teams thrive."
+              "I don't just build websites — I build the systems that run the business behind them."
             </blockquote>
           </motion.div>
 
           <motion.div variants={fadeUp} className="card-surface p-6 space-y-4">
             {[
               { label: "Location", value: "Bohol, Philippines" },
-              { label: "Current Roles", value: "Ops & Admin · House of Lettings | Automation Specialist · 24fingers" },
-              { label: "Availability", value: "Open to Freelance / VA / Remote" },
+              { label: "Current Roles", value: "Ops Business Dev · House of Lettings | Automation Specialist · 24fingers" },
+              { label: "Availability", value: "Open to Projects · Freelance · White-Label" },
               { label: "LinkedIn", value: "linkedin.com/in/markravecan" },
               { label: "Certification", value: "TSA Certified · 2026 🏅" },
             ].map((item) => (
@@ -828,7 +828,7 @@ export default function Home() {
               </div>
             ))}
             <div className="pt-2 flex flex-wrap gap-2">
-              {["BPO Leadership", "Remote Ops", "CRM Systems", "Recruitment", "Make.com", "Project Mgmt"].map((tag) => (
+              {["React & Next.js", "TypeScript", "Firebase", "Make.com", "AI Agents", "CRM Systems"].map((tag) => (
                 <span key={tag} className="tag">{tag}</span>
               ))}
             </div>
@@ -1168,7 +1168,7 @@ export default function Home() {
         <SectionHeader
           eyebrow="07 — Get In Touch"
           title={<>Ready to build <span className="gradient-text">something great?</span></>}
-          subtitle="Open to remote roles, freelance projects, and long-term VA partnerships. Reach out — let's talk."
+          subtitle="Open to freelance projects, white-label partnerships, and long-term retainers. Share the goal and budget — I'll tailor a quote."
         />
 
         <div className="grid md:grid-cols-2 gap-12">
